@@ -201,7 +201,13 @@ export default {
 					const filterBody = document.querySelector(`[data-filter-name="${searchParam[0]}"]`)
 					// console.log(filterBody);
 					if (searchParam[0] == 'Manufacturer_ID_like') {
-						// val.text = 
+						val.text =  axios({
+							method: 'get',
+							url: 'http://localhost:3000/cards?_limit=1&Manufacturer_ID=3'
+						}).then((res) => {
+							console.log(this);
+							// a.f = res.data
+						})
 					} else {
 						val.text = [filterBody.dataset.filterText, searchParam[1]]
 					}
@@ -237,22 +243,22 @@ export default {
 		}
 	},
 	mounted() {
-		const a = {
+		let a = {
 			f: axios({
 				method: 'get',
 				url: 'http://localhost:3000/cards?_limit=1&Manufacturer_ID=3'
-			}).then(function (res) {
-				console.log(this);
-				return res.data
+			}).then((res) => {
+				// console.log(this);
+				a.f = res.data
 			})
 		}
 
 		setTimeout(() => {
-			console.log(a);
+			// console.log(a);
 		}, 2000)
 		// this.initRout()
 		// console.log(this.$watch());
-		// console.log(this.$refs);
+		console.log(this.$parent);
 		this.initParams()
 	},
 	watch: {
