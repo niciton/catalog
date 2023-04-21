@@ -165,13 +165,6 @@ export default {
 			}, 5000);
 		},
 
-		initRout() {
-			// console.log(this.$route);
-
-			// this.categoryId = 
-			// this.$route.meta.title = this.$route || this.$root.meta.title
-		},
-
 		initParams() {
 			const search = decodeURIComponent(location.search.replace('?', ''))
 
@@ -197,8 +190,6 @@ export default {
 						})
 					}
 
-					// console.log('init val: ', val);
-
 					const filterBody = document.querySelector(`[data-filter-name="${name}"]`)
 					if (name == 'Manufacturer_ID_like') {
 						const optionLng = value.split(',').length
@@ -210,16 +201,10 @@ export default {
 							
 							const text = filterBody.dataset.filterText
 
-							console.log(res.data);
-
-							console.log(this.storeOptions());
 							this.setOptions({
 								...this.storeOptions(),
 								[name]: [text, (+optionLng > 1) ? `${optionLng} значения` : res.data[0]?.Manufacturer],
 							})
-							
-							// console.log(this);
-							// a.f = res.data
 						})
 					} else {
 						loadOptions[name] = [filterBody.dataset.filterText, value]
@@ -229,26 +214,20 @@ export default {
 				})
 				this.setOptions(loadOptions)
 				this.setParams(loadParams)
-				// console.log(this.storeParams());
-				// this.getProduct()
 			} else {
 				this.getProduct()
 			}
 		},
 
 		removeOption(name) {
-			// console.log(val);
 			const filterBody = document.querySelector(`[data-filter-name="${name}"]`)
 			const filterInps = filterBody.querySelectorAll('input')
-			// console.log(filterBody, filterInps[0]);
 
 			let newOptions = this.storeOptions()
-			console.log(newOptions);
+			// console.log(newOptions);
 			newOptions[name] = []
 
 			filterInps.forEach(inp => {
-				// console.log(inp.getAttribute('type'));
-				// console.log(inp.checked);
 				if (inp.type == 'checkbox') {
 					inp.checked = false
 				} else {
@@ -258,13 +237,9 @@ export default {
 
 			this.setOptions(newOptions)
 			this.deleteParam(name)
-			// console.log(this.storeParams());
 		}
 	},
 	mounted() {
-		// this.initRout()
-		// console.log(this.$watch());
-		// console.log(this.$parent);
 		this.initParams()
 	},
 	watch: {
@@ -272,16 +247,18 @@ export default {
 			handler(val) {
 				this.getProduct()
 				if (!(this.storeShowContent())) scrollTo()
-				console.log(this.storeParams());
+				// console.log(this.storeParams());
 			},
 			deep: true,
 		},
 		cards(val) {
 			// console.log(val);
 		},
+		lastPage(val){
+			console.log(val);
+		},
 		'$route.path'() {
 			// console.log('Совершён переход по ссылке')
-			// this.getProduct()
 			let isChange = false
 			let newParams = {}
 

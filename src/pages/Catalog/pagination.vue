@@ -22,14 +22,16 @@
 					</a>
 				</template>
 				<template v-else>
-					<a :href="'?_page=' + Number(lastPage - (pagesAmount - index))"
-						@click.prevent="page = Number(lastPage - (pagesAmount - index))"
-						:class="['Pagination__item', { 'Pagination__item--active': page == Number(lastPage - (pagesAmount - index)) }]"
-						v-for="(isActive, index) in pagesAmount" :key="index">
-						{{
-							Number(lastPage - (pagesAmount - index))
-						}}
-					</a>
+					<template v-for="(isActive, index) in pagesAmount" :key="index">
+						<a :href="'?_page=' + Number(lastPage - (pagesAmount - index))"
+							@click.prevent="page = Number(lastPage - (pagesAmount - index))"
+							:class="['Pagination__item', { 'Pagination__item--active': page == Number(lastPage - (pagesAmount - index)) }]"
+							v-if="Number(lastPage - (pagesAmount - index)) > 1" >
+							{{
+								Number(lastPage - (pagesAmount - index))
+							}}
+						</a>
+					</template>
 				</template>
 
 				<span class="Pagination__item Pagination__--" v-if="lastPage - 4 > page && pagesAmount < lastPage - 2"></span>
@@ -94,7 +96,7 @@ export default {
 				// console.log(this.params);
 			}, 5000);
 		},
-		setAmount(){
+		setAmount() {
 			this.pagesAmount = this.lastPage <= 8 ? this.lastPage - 2 : 7
 		},
 	},
@@ -104,15 +106,19 @@ export default {
 	watch: {
 		page(index) {
 			const val = index == 1 ? '' : index
-			this.setParam({ val: {value: val}, name: '_page' })
+			this.setParam({ val: { value: val }, name: '_page' })
 			// console.log('from pagination: ', typeof this.params);
 		},
 		pageIndex(val) {
 			this.page = val || 1
 		},
 		lastPage(val) {
+			console.log(val);
 			this.setAmount()
-		}
+		},
+		pagesAmount(val) {
+			console.log(val);
+		},
 		// params: {
 		// 	handler(val) {
 		// 		console.log(val);

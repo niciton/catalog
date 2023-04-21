@@ -125,7 +125,7 @@
                     }
 
                     .tns-outer .tns-ovh {
-                        // height: 310px !important;
+                        height: auto !important;
                     }
 
                     .slider_pagination {
@@ -197,7 +197,7 @@
                         img {
                             display: flex;
                             min-width: 200px;
-                            min-height: 200px;
+                            min-height: 400px;
                             max-width: 100%;
                         }
                     }
