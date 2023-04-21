@@ -28,11 +28,12 @@
 					</a>
 				</div>
 				<div class="options">
-					<template v-for="(option, optionName) in params" :key="option">
-						<button v-if="option.text?.length > 1" @click="removeOption(optionName)" class="filter_btn">
-							{{ option.text[0] }}:
+					<template v-for="(option, optionName) in storeOptions()" :key="option">
+						<!-- {{ option }} -->
+						<button v-if="option?.length > 1" @click="removeOption(optionName)" class="filter_btn">
+							{{ option[0] }}:
 							<span class="value">
-								{{ option.text[1] }}
+								{{ option[1] }}
 							</span>
 							<span class="close">
 								<svg width="19" height="19" viewBox="0 0 19 19" fill="none">
@@ -100,13 +101,15 @@ export default {
 	methods: {
 		...mapState({
 			storeParams: store => store.catalogStore.params,
+			storeOptions: store => store.catalogStore.options,
 			storeShowContent: store => store.catalogStore.showContent,
 		}),
 
 		...mapMutations({
-			deleteParam: 'catalogStore/deleteParam',
 			setParam: 'catalogStore/setParam',
 			setParams: 'catalogStore/setParams',
+			setOptions: 'catalogStore/setOptions',
+			deleteParam: 'catalogStore/deleteParam',
 			setShowContent: 'catalogStore/setShowContent',
 		}),
 
@@ -174,15 +177,17 @@ export default {
 
 			if (search) {
 				let loadParams = {}
+				let loadOptions = {}
 
 				const searchItems = search.split('&')
 				searchItems.forEach(searchItem => {
-					const searchParam = searchItem.split('=')
+					const [name, value] = searchItem.split('=')
+
 					let val = {
-						value: searchParam[1],
+						value: value,
 					}
 
-					if (searchParam[0] == 'Manufacturer_ID_like') {
+					if (name == 'Manufacturer_ID_like') {
 						const paramsArr = val.value.split(',')
 						val = {
 							value: {},
@@ -194,26 +199,35 @@ export default {
 
 					// console.log('init val: ', val);
 
-					// this.setParam({
-					// 	name: searchParam[0],
-					// 	val,
-					// })
-					const filterBody = document.querySelector(`[data-filter-name="${searchParam[0]}"]`)
-					// console.log(filterBody);
-					if (searchParam[0] == 'Manufacturer_ID_like') {
+					const filterBody = document.querySelector(`[data-filter-name="${name}"]`)
+					if (name == 'Manufacturer_ID_like') {
+						const optionLng = value.split(',').length
+
 						val.text =  axios({
 							method: 'get',
-							url: 'http://localhost:3000/cards?_limit=1&Manufacturer_ID=3'
+							url: `http://localhost:3000/cards?_limit=1&Manufacturer_ID=${value}`,
 						}).then((res) => {
-							console.log(this);
+							
+							const text = filterBody.dataset.filterText
+
+							console.log(res.data);
+
+							console.log(this.storeOptions());
+							this.setOptions({
+								...this.storeOptions(),
+								[name]: [text, (+optionLng > 1) ? `${optionLng} значения` : res.data[0]?.Manufacturer],
+							})
+							
+							// console.log(this);
 							// a.f = res.data
 						})
 					} else {
-						val.text = [filterBody.dataset.filterText, searchParam[1]]
+						loadOptions[name] = [filterBody.dataset.filterText, value]
 					}
 
-					loadParams[searchParam[0]] = val
+					loadParams[name] = val
 				})
+				this.setOptions(loadOptions)
 				this.setParams(loadParams)
 				// console.log(this.storeParams());
 				// this.getProduct()
@@ -226,7 +240,11 @@ export default {
 			// console.log(val);
 			const filterBody = document.querySelector(`[data-filter-name="${name}"]`)
 			const filterInps = filterBody.querySelectorAll('input')
-			console.log(filterBody, filterInps[0]);
+			// console.log(filterBody, filterInps[0]);
+
+			let newOptions = this.storeOptions()
+			console.log(newOptions);
+			newOptions[name] = []
 
 			filterInps.forEach(inp => {
 				// console.log(inp.getAttribute('type'));
@@ -238,27 +256,15 @@ export default {
 				}
 			})
 
+			this.setOptions(newOptions)
 			this.deleteParam(name)
 			// console.log(this.storeParams());
 		}
 	},
 	mounted() {
-		let a = {
-			f: axios({
-				method: 'get',
-				url: 'http://localhost:3000/cards?_limit=1&Manufacturer_ID=3'
-			}).then((res) => {
-				// console.log(this);
-				a.f = res.data
-			})
-		}
-
-		setTimeout(() => {
-			// console.log(a);
-		}, 2000)
 		// this.initRout()
 		// console.log(this.$watch());
-		console.log(this.$parent);
+		// console.log(this.$parent);
 		this.initParams()
 	},
 	watch: {

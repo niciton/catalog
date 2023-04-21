@@ -62,6 +62,7 @@ export default {
 	methods: {
 		...mapState({
 			storeParams: store => store.catalogStore.params,
+			storeOptions: store => store.catalogStore.options,
 			storeShowContent: store => store.catalogStore.showContent,
 			storeLoadFilters: store => store.catalogStore.loadFilters
 		}),
@@ -69,6 +70,7 @@ export default {
 		...mapMutations({
 			setParam: 'catalogStore/setParam',
 			setParams: 'catalogStore/setParams',
+			setOptions: 'catalogStore/setOptions',
 			setShowContent: 'catalogStore/setShowContent',
 		}),
 		initFilters() {
@@ -103,7 +105,10 @@ export default {
 			// console.log(newParams);
 
 			// console.log('filter: ', this.params[`${name}`]);
-
+			let optionsObj = {
+				...this.storeOptions(),
+				[name]: this.getText(filterId, 1),
+			}
 			let paramsObj = {
 				name,
 				val: {
@@ -112,7 +117,7 @@ export default {
 						[filterId]: filterId,
 					},
 
-					text: this.getText(filterId, 1)
+					// text: this.getText(filterId, 1)
 				},
 			}
 
@@ -127,10 +132,12 @@ export default {
 				if (!inp.checked) {
 					delete paramsObj.val.value[filterId]
 				}
-				console.log(Object.values(paramsObj.val.value).length);
-				paramsObj.val.text = this.getText(filterId, Object.values(paramsObj.val.value).length)
+				// console.log(Object.values(paramsObj.val.value).length);
+				// paramsObj.val.text = this.getText(filterId, Object.values(paramsObj.val.value).length)
+				optionsObj[name] = this.getText(filterId, Object.values(paramsObj.val.value).length)
 			} 
 			this.setParam(paramsObj)
+			this.setOptions(optionsObj)
 		},
 		getText(filterId, lng){
 			const textValue = this.filters[filterId].text

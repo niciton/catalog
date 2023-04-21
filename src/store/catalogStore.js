@@ -1,7 +1,7 @@
 export const catalogStore = {
   state: () => ({
     params: {},
-    // btnParams: {},
+    options: {},
     loadFilters: {},
     
     showContent: false,
@@ -11,11 +11,7 @@ export const catalogStore = {
     setParam(state, paramObj) {
       state.params[paramObj.name] = paramObj.val
       // console.log(state.params[paramObj.name]);
-      console.log(paramObj.val);
-      state.fooList.forEach(foo => {
-        // console.log(foo);
-        // foo()
-      });
+      // console.log(paramObj.val);
     },
 
     setParams(state, params = {}) {
@@ -35,9 +31,11 @@ export const catalogStore = {
       const val = boll ? !!boll : !state.showContent
       state.showContent = val
     },
-    // setBtnParam(state, {te}){
-    //   state.btnParams[] = 
-    // },
+    setOptions(state, newOptions){
+      // console.log(optionName);
+      // state.btnParams[] = 
+      Object.assign(state.options, newOptions)
+    },
   },
 
 

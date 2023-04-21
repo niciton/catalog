@@ -110,13 +110,15 @@ export default {
   methods: {
     ...mapState({
       deleteParam: store => store.catalogStore.deleteParam,
+			storeOptions: store => store.catalogStore.options,
       storeParams: store => store.catalogStore.params,
       menuClass: state => state.menuStore.menuClass,
     }),
     ...mapMutations({
-      toggleMenuClass: 'menuStore/toggleMenuClass',
       closeMenu: 'menuStore/closeMenu',
       setParams: 'catalogStore/setParams',
+			setOptions: 'catalogStore/setOptions',
+      toggleMenuClass: 'menuStore/toggleMenuClass',
     }),
     getURLSearch() {
       const val = decodeURIComponent(location.search.split('q=')[1]?.split('&')[0])
@@ -154,28 +156,36 @@ export default {
       // for (const item in this.setParams()) {
       //   this.deleteParam(item)
       // }
-      let newParams = {}
+      this.showPrompt = false
+
+      let newParams = this.storeParams()
+      let newOptions = {}
 
       for (const param in this.storeParams()) {
         if (this.storeParams()[param]) {
           // isChange = true
         }
+
         // console.log(param);
         newParams[param] = {}
-        newParams[param].value = ''
-        newParams[param].text = []
+        // newParams[param].value = ''
       }
 
-      this.showPrompt = false
+      for (const option in this.storeOptions()) {
+        newOptions[option] = []
+      }
 
       newParams.q = {
         value: this.getSearch(),
-        text: ['Поиск', this.getSearch()],
+        // text: ['Поиск', this.getSearch()],
       }
+      newOptions.q = ['Поиск', this.getSearch()]
       // newParams.text = 'Поиск'
-      console.log(newParams);
+      // console.log(newParams);
+
       this.$router.push(`/catalog/`)
       this.setParams(newParams)
+      this.setOptions(newOptions)
     },
     setPrompt() {
       if (this.isFilled()) {
