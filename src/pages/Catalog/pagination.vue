@@ -26,7 +26,7 @@
 						<a :href="'?_page=' + Number(lastPage - (pagesAmount - index))"
 							@click.prevent="page = Number(lastPage - (pagesAmount - index))"
 							:class="['Pagination__item', { 'Pagination__item--active': page == Number(lastPage - (pagesAmount - index)) }]"
-							v-if="Number(lastPage - (pagesAmount - index)) > 1" >
+							v-if="1 < Number(lastPage - (pagesAmount - index)) < lastPage" >
 							{{
 								Number(lastPage - (pagesAmount - index))
 							}}
